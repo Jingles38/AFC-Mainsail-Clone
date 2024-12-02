@@ -94,7 +94,7 @@
                                                 }"></span>
                                                 <h3>{{ spool.laneName }}</h3>
                                                 <div class="spacer"/>
-                                                <select :name="spool?.laneName" class="afclist" @change="handleRunoutChange($event, spool)">
+                                                <select :name="'run-' + spool?.laneName" class="afclist" @change="handleRunoutChange($event, spool)">
                                                     <option
                                                         v-for="option in mapList"
                                                         :key="option"
