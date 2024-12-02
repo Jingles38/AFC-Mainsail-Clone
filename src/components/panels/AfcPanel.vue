@@ -382,11 +382,13 @@ export default class AfcPanel extends Mixins(BaseMixin) {
     }
 
     handleRunoutChange(event: Event, spool: any) {
-        const selectedValue = (event.target as HTMLSelectElement.value);
-        console.log(Selectedvalue for ${spool.laneName}: ${selectedValue});
+        const selectedValue = (event.target as HTMLSelectElement).value;
+        console.log(`Selected value for ${spool.laneName}: ${selectedValue}`);
 
-        const gcode = SET_RUNOUT LANE=${spool.laneName} RUNOUT=${selectedValue}
+    //Example G-Code Call for you
+        const gcode = `SET_RUNOUT LANE=${spool.laneName} RUNOUT=${selectedValue}`
         console.log('Dispatching G-code:', gcode)
+
         this.$nextTick(async () => {
             try {
                 await this.$store.dispatch('printer/sendGcode', gcode)
@@ -398,11 +400,13 @@ export default class AfcPanel extends Mixins(BaseMixin) {
     }
 
     handleMapChange(event: Event, spool: any) {
-        const selectedValue = (event.target as HTMLSelectElement).value);
-        console.log(Selectedvalue for ${spool.laneName}: ${selectedValue});
+        const selectedValue = (event.target as HTMLSelectElement).value;
+        console.log(`Selected value for ${spool.laneName}: ${selectedValue}`);
 
-        const gcode = SET_MAP LANE=${spool.laneName} MAP=${selectedValue}
+        //Example G-Code Call for you
+        const gcode = `SET_MAP LANE=${spool.laneName} MAP=${selectedValue}`
         console.log('Dispatching G-code:', gcode)
+
         this.$nextTick(async () => {
             try {
                 await this.$store.dispatch('printer/sendGcode', gcode)
@@ -412,7 +416,6 @@ export default class AfcPanel extends Mixins(BaseMixin) {
             }
         })
     }
-}
 
 </script>
 
@@ -444,10 +447,11 @@ export default class AfcPanel extends Mixins(BaseMixin) {
     flex: 1 1 calc(23% - 16px);
     max-width: 180px;
     min-width: 80px;
+    min-height: 117px;
     position: relative;
     cursor: hand;
     transition: box-shadow 0.3s;
-    margin-bottom: 8px;
+    margin-bottom: 0px;
     text-align: right;
 }
 
