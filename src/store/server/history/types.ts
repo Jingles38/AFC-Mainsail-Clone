@@ -91,7 +91,3 @@ export interface ServerHistoryStateAllPrintStatusEntry {
 }
 
 export type HistoryStatsValueNames = 'jobs' | 'filament' | 'time'
-
-export interface ServerHistoryStateJobWithCount extends ServerHistoryStateJob {
-    count: number
-}

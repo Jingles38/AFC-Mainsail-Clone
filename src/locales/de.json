@@ -741,8 +741,10 @@
             },
             "Filament": "Filament",
             "File": "Datei",
+            "Files": "Dateien",
             "Flow": "Fluss",
             "Headline": "Status",
+            "Jobqueue": "Warteschlange",
             "JobqueueMoreFiles": "keine weiteren Aufträge | einen weiteren Auftrag | {count} weitere Aufträge",
             "Layer": "Schicht",
             "Max": "max",
@@ -767,6 +769,7 @@
             "ResumePrint": "Druck fortführen",
             "Slicer": "Slicer",
             "Speed": "Geschwindigkeit",
+            "Status": "Status",
             "Total": "Gesamt",
             "Unknown": "Unbekannt"
         },
