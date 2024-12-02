@@ -89,18 +89,11 @@
                 <v-divider class="mt-0 mb-0" />
             </template>
             <v-tabs v-model="activeTab" fixed-tabs>
-                <v-tab v-if="current_filename" href="#status">
-                    <v-icon>{{ mdiSpeedometer }}</v-icon>
-                </v-tab>
-                <v-tab v-if="displayFilesTab" href="#files">
-                    <v-icon>{{ mdiFileDocumentMultipleOutline }}</v-icon>
-                </v-tab>
-                <v-tab v-if="displayHistoryTab" href="#history">
-                    <v-icon>{{ mdiHistory }}</v-icon>
-                </v-tab>
+                <v-tab v-if="current_filename" href="#status">{{ $t('Panels.StatusPanel.Status') }}</v-tab>
+                <v-tab href="#files">{{ $t('Panels.StatusPanel.Files') }}</v-tab>
                 <v-tab href="#jobqueue">
                     <v-badge :color="jobQueueBadgeColor" :content="jobsCount.toString()" :inline="true">
-                        <v-icon color="disabled">{{ mdiTrayFull }}</v-icon>
+                        {{ $t('Panels.StatusPanel.Jobqueue') }}
                     </v-badge>
                 </v-tab>
             </v-tabs>
@@ -109,11 +102,8 @@
                 <v-tab-item v-if="current_filename" value="status">
                     <status-panel-printstatus />
                 </v-tab-item>
-                <v-tab-item v-if="displayFilesTab" value="files">
+                <v-tab-item value="files">
                     <status-panel-gcodefiles />
-                </v-tab-item>
-                <v-tab-item v-if="displayHistoryTab" value="history">
-                    <status-panel-history />
                 </v-tab-item>
                 <v-tab-item value="jobqueue">
                     <status-panel-jobqueue />
@@ -135,7 +125,6 @@ import MinSettingsPanel from '@/components/panels/MinSettingsPanel.vue'
 import KlippyStatePanel from '@/components/panels/KlippyStatePanel.vue'
 import StatusPanelPrintstatus from '@/components/panels/Status/Printstatus.vue'
 import StatusPanelGcodefiles from '@/components/panels/Status/Gcodefiles.vue'
-import StatusPanelHistory from '@/components/panels/Status/History.vue'
 import StatusPanelJobqueue from '@/components/panels/Status/Jobqueue.vue'
 import StatusPanelExcludeObject from '@/components/panels/Status/ExcludeObject.vue'
 import StatusPanelPrintstatusThumbnail from '@/components/panels/Status/PrintstatusThumbnail.vue'
@@ -144,20 +133,16 @@ import Panel from '@/components/ui/Panel.vue'
 import {
     mdiAlertOutline,
     mdiBroom,
-    mdiCloseCircle,
-    mdiDotsVertical,
-    mdiFileDocumentMultipleOutline,
-    mdiHistory,
     mdiInformation,
-    mdiLayersPlus,
-    mdiMessageProcessingOutline,
     mdiPause,
     mdiPlay,
     mdiPrinter,
     mdiSelectionRemove,
-    mdiSpeedometer,
     mdiStop,
-    mdiTrayFull,
+    mdiMessageProcessingOutline,
+    mdiCloseCircle,
+    mdiLayersPlus,
+    mdiDotsVertical,
 } from '@mdi/js'
 import { PrinterStateMacro } from '@/store/printer/types'
 import CancelJobDialog from '@/components/dialogs/CancelJobDialog.vue'
@@ -170,7 +155,6 @@ import CancelJobDialog from '@/components/dialogs/CancelJobDialog.vue'
         Panel,
         StatusPanelExcludeObject,
         StatusPanelGcodefiles,
-        StatusPanelHistory,
         StatusPanelJobqueue,
         StatusPanelPrintstatus,
         StatusPanelPrintstatusThumbnail,
@@ -178,15 +162,11 @@ import CancelJobDialog from '@/components/dialogs/CancelJobDialog.vue'
     },
 })
 export default class StatusPanel extends Mixins(BaseMixin) {
-    mdiAlertOutline = mdiAlertOutline
+    mdiInformation = mdiInformation
+    mdiMessageProcessingOutline = mdiMessageProcessingOutline
     mdiCloseCircle = mdiCloseCircle
     mdiDotsVertical = mdiDotsVertical
-    mdiFileDocumentMultipleOutline = mdiFileDocumentMultipleOutline
-    mdiInformation = mdiInformation
-    mdiHistory = mdiHistory
-    mdiMessageProcessingOutline = mdiMessageProcessingOutline
-    mdiSpeedometer = mdiSpeedometer
-    mdiTrayFull = mdiTrayFull
+    mdiAlertOutline = mdiAlertOutline
 
     declare $refs: {
         bigThumbnail: any
@@ -382,22 +362,8 @@ export default class StatusPanel extends Mixins(BaseMixin) {
         return this.layer_count !== null && (this.existsSetPauseAtLayer || this.existsSetPauseNextLayer)
     }
 
-    get displayFilesTab() {
-        const count = this.$store.state.gui.uiSettings.dashboardFilesLimit ?? 5
-
-        return count > 0
-    }
-
-    get displayHistoryTab() {
-        const count = this.$store.state.gui.uiSettings.dashboardHistoryLimit ?? 5
-
-        return count > 0
-    }
-
     mounted() {
         if (this.current_filename !== '') this.activeTab = 'status'
-        if (!this.displayFilesTab) this.activeTab = 'history'
-        if (!this.displayHistoryTab) this.activeTab = 'jobqueue'
     }
 
     @Watch('current_filename')
@@ -461,9 +427,5 @@ export default class StatusPanel extends Mixins(BaseMixin) {
 ._border-radius {
     border-bottom-left-radius: inherit;
     border-bottom-right-radius: inherit;
-}
-
-.theme--dark.v-tabs > .v-tabs-bar .v-tab:not(.v-tab--active) > .v-badge > .v-icon {
-    color: rgba(255, 255, 255, 0.6);
 }
 </style>

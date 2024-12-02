@@ -48,11 +48,11 @@ body {
     height: 100% !important;
 }
 
-.position-absolute {
+.p-abs {
     position: absolute !important;
 }
 
-.position-relative {
+.p-rel {
     position: relative !important;
 }
 

@@ -1,5 +1,5 @@
 <template>
-    <div class="position-relative d-flex">
+    <div>
         <video
             v-show="status === 'connected'"
             ref="stream"
@@ -8,7 +8,6 @@
             autoplay
             muted
             playsinline />
-        <webcam-nozzle-crosshair v-if="nozzleCrosshair" :webcam="camSettings" />
         <v-row v-if="status !== 'connected'">
             <v-col class="_webcam_webrtc_output text-center d-flex flex-column justify-center align-center">
                 <v-progress-circular v-if="status === 'connecting'" indeterminate color="primary" class="mb-3" />
@@ -24,7 +23,6 @@ import BaseMixin from '@/components/mixins/base'
 import { GuiWebcamStateWebcam } from '@/store/gui/webcams/types'
 import WebcamMixin from '@/components/mixins/webcam'
 import { capitalize } from '@/plugins/helpers'
-import WebcamNozzleCrosshair from '@/components/webcams/WebcamNozzleCrosshair.vue'
 
 interface CameraStreamerResponse extends RTCSessionDescriptionInit {
     id: string
@@ -32,7 +30,7 @@ interface CameraStreamerResponse extends RTCSessionDescriptionInit {
 }
 
 @Component({
-    components: { WebcamNozzleCrosshair },
+    methods: { capitalize },
 })
 export default class WebrtcCameraStreamer extends Mixins(BaseMixin, WebcamMixin) {
     capitalize = capitalize
@@ -65,10 +63,6 @@ export default class WebrtcCameraStreamer extends Mixins(BaseMixin, WebcamMixin)
         if (this.aspectRatio) output.aspectRatio = this.aspectRatio
 
         return output
-    }
-
-    get nozzleCrosshair() {
-        return this.camSettings.extra_data?.nozzleCrosshair ?? false
     }
 
     get expanded(): boolean {

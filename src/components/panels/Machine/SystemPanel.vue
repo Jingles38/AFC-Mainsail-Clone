@@ -1,27 +1,25 @@
-<template>
+<style scoped>
+.cursor--pointer {
+    cursor: pointer;
+}
+</style>
+
+<template v-if="klipperReadyForGui">
     <panel
-        v-if="klipperReadyForGui"
         :title="$t('Machine.SystemPanel.SystemLoad')"
         :icon="mdiMemory"
         card-class="machine-systemload-panel"
         :collapsible="true">
-        <template #buttons>
-            <v-btn text tile class="d-none d-md-flex" @click="dialogDevices = true">
-                <v-icon small class="mr-1">{{ mdiUsb }}</v-icon>
-                {{ $t('Editor.DeviceDialog') }}
-            </v-btn>
-        </template>
         <v-card-text class="px-0 py-2">
             <div v-for="(mcu, index) of mcus" :key="mcu.name">
-                <v-divider v-if="index" class="my-2" />
-                <system-panel-mcu :mcu="mcu" />
+                <v-divider v-if="index" class="my-2"></v-divider>
+                <system-panel-mcu :mcu="mcu"></system-panel-mcu>
             </div>
             <div v-if="hostStats">
-                <v-divider v-if="mcus.length" class="my-2" />
-                <system-panel-host />
+                <v-divider v-if="mcus.length" class="my-2"></v-divider>
+                <system-panel-host></system-panel-host>
             </div>
         </v-card-text>
-        <devices-dialog :show-dialog="dialogDevices" @close="dialogDevices = false" />
     </panel>
 </template>
 
@@ -30,7 +28,7 @@ import { Component, Mixins } from 'vue-property-decorator'
 import BaseMixin from '../../mixins/base'
 import Panel from '@/components/ui/Panel.vue'
 import { caseInsensitiveSort } from '@/plugins/helpers'
-import { mdiCloseThick, mdiMemory, mdiUsb } from '@mdi/js'
+import { mdiCloseThick, mdiMemory } from '@mdi/js'
 import SystemPanelHost from '@/components/panels/Machine/SystemPanelHost.vue'
 import SystemPanelMcu from '@/components/panels/Machine/SystemPanelMcu.vue'
 @Component({
@@ -39,9 +37,6 @@ import SystemPanelMcu from '@/components/panels/Machine/SystemPanelMcu.vue'
 export default class SystemPanel extends Mixins(BaseMixin) {
     mdiCloseThick = mdiCloseThick
     mdiMemory = mdiMemory
-    mdiUsb = mdiUsb
-
-    dialogDevices = false
 
     get mcus() {
         const mcus = this.$store.getters['printer/getMcus'] ?? []
@@ -54,9 +49,3 @@ export default class SystemPanel extends Mixins(BaseMixin) {
     }
 }
 </script>
-
-<style scoped>
-.cursor--pointer {
-    cursor: pointer;
-}
-</style>

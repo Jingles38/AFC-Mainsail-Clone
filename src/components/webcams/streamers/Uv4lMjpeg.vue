@@ -5,7 +5,6 @@
             v-observe-visibility="viewportVisibilityChanged"
             :style="webcamStyle"
             class="webcamImage"
-            draggable="false"
             @load="onload" />
     </div>
 </template>
