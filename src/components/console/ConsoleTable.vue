@@ -13,7 +13,7 @@
                 :key="index"
                 class="consoleTableRow"
                 :event="event"
-                @command-click="commandClick" />
+                @command-click="commandClick"></console-table-entry>
         </template>
     </div>
 </template>

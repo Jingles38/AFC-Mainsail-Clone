@@ -36,21 +36,5 @@ import BaseMixin from '@/components/mixins/base'
 export default class BoxTurtleIcon extends Mixins(BaseMixin) {
     @Prop({ required: false, default: '#ff0' })
     declare readonly color: string
-
-    get styleCircle1() {
-        return { fill: this.color }
-    }
-
-    get styleCircle2() {
-        return { fill: '#bebebe' }
-    }
-
-    get styleCircle3() {
-        return { fill: '#343434' }
-    }
-
-    clickSpool() {
-        this.$emit('click-spool')
-    }
 }
 </script>

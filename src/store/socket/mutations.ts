@@ -16,13 +16,11 @@ export const mutations: MutationTree<SocketState> = {
         Vue.set(state, 'connectingFailed', false)
     },
 
-    setDisconnected(state, message?: string) {
+    setDisconnected(state) {
         Vue.set(state, 'isConnected', false)
         Vue.set(state, 'isConnecting', false)
         Vue.set(state, 'connectingFailed', true)
         Vue.set(state, 'connection_id', null)
-
-        if (message) Vue.set(state, 'connectionFailedMessage', message)
     },
 
     setData(state, payload) {

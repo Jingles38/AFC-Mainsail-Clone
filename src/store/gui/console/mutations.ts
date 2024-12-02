@@ -17,17 +17,17 @@ export const mutations: MutationTree<GuiConsoleState> = {
     },
 
     filterUpdate(state, payload) {
-        if (!(payload.id in state.consolefilters)) return
+        if (payload.id in state.consolefilters) {
+            const preset = { ...state.consolefilters[payload.id] }
+            Object.assign(preset, payload.values)
 
-        const preset = { ...state.consolefilters[payload.id] }
-        Object.assign(preset, payload.values)
-
-        Vue.set(state.consolefilters, payload.id, preset)
+            Vue.set(state.consolefilters, payload.id, preset)
+        }
     },
 
     filterDelete(state, payload) {
-        if (!(payload in state.consolefilters)) return
-
-        Vue.delete(state.consolefilters, payload)
+        if (payload in state.consolefilters) {
+            Vue.delete(state.consolefilters, payload)
+        }
     },
 }

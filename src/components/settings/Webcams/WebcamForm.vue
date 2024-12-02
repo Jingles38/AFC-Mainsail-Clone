@@ -145,7 +145,7 @@
                     </v-row>
                 </v-col>
                 <v-col class="col-12 col-sm-6 text-center" align-self="center">
-                    <webcam-wrapper :webcam="webcam" page="settings" />
+                    <webcam-wrapper :webcam="webcam" />
                 </v-col>
             </v-row>
         </v-card-text>

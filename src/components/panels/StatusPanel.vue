@@ -110,10 +110,6 @@
                 </v-tab-item>
             </v-tabs-items>
         </panel>
-        <cancel-job-dialog
-            :show-dialog="showCancelJobDialog"
-            @cancel-job="cancelJob"
-            @close="showCancelJobDialog = false" />
     </div>
 </template>
 
@@ -145,11 +141,9 @@ import {
     mdiDotsVertical,
 } from '@mdi/js'
 import { PrinterStateMacro } from '@/store/printer/types'
-import CancelJobDialog from '@/components/dialogs/CancelJobDialog.vue'
 
 @Component({
     components: {
-        CancelJobDialog,
         KlippyStatePanel,
         MinSettingsPanel,
         Panel,
@@ -172,7 +166,6 @@ export default class StatusPanel extends Mixins(BaseMixin) {
         bigThumbnail: any
     }
 
-    showCancelJobDialog = false
     boolShowObjects = false
     boolShowPauseAtLayer = false
 
@@ -399,17 +392,6 @@ export default class StatusPanel extends Mixins(BaseMixin) {
     }
 
     btnCancelJob() {
-        const confirmOnCancelJob = this.$store.state.gui.uiSettings.confirmOnCancelJob
-        if (confirmOnCancelJob) {
-            this.showCancelJobDialog = true
-            return
-        }
-
-        this.cancelJob()
-    }
-
-    cancelJob() {
-        this.showCancelJobDialog = false
         this.$socket.emit('printer.print.cancel', {}, { loading: 'statusPrintCancel' })
     }
 

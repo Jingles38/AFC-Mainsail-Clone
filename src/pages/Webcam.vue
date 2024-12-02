@@ -4,7 +4,7 @@
     <div>
         <v-row>
             <v-col col-12>
-                <webcam-panel current-page="page" />
+                <webcam-panel current-page="page"></webcam-panel>
             </v-col>
         </v-row>
     </div>

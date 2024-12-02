@@ -134,7 +134,6 @@ import { Component, Mixins, Prop } from 'vue-property-decorator'
 import HistoryListPanelDetailsDialog from '@/components/dialogs/HistoryListPanelDetailsDialog.vue'
 import Panel from '@/components/ui/Panel.vue'
 import BaseMixin from '@/components/mixins/base'
-import { FileStateFileThumbnail } from '@/store/files/types'
 import { ServerHistoryStateJob } from '@/store/server/history/types'
 import { thumbnailBigMin, thumbnailSmallMax, thumbnailSmallMin } from '@/store/variables'
 import {
@@ -188,22 +187,40 @@ export default class HistoryListPanel extends Mixins(BaseMixin) {
         if ((this.item.metadata?.thumbnails?.length ?? 0) < 1) return false
 
         const thumbnail = this.item.metadata?.thumbnails?.find(
-            (thumb) =>
+            (thumb: any) =>
                 thumb.width >= thumbnailSmallMin &&
                 thumb.width <= thumbnailSmallMax &&
                 thumb.height >= thumbnailSmallMin &&
                 thumb.height <= thumbnailSmallMax
         )
 
-        return thumbnail ? this.createThumbnailUrl(thumbnail) : false
+        let relative_url = ''
+        if (this.item.filename.lastIndexOf('/') !== -1) {
+            relative_url = this.item.filename.substring(0, this.item.filename.lastIndexOf('/'))
+        }
+
+        if ((thumbnail?.relative_path ?? null) === null) return false
+
+        return `${this.apiUrl}/server/files/gcodes/${encodeURI(relative_url + thumbnail?.relative_path)}?timestamp=${
+            this.item.metadata.modified
+        }`
     }
 
     get bigThumbnail() {
         if ((this.item.metadata?.thumbnails?.length ?? 0) < 1) return false
 
-        const thumbnail = this.item.metadata?.thumbnails?.find((thumb) => thumb.width >= thumbnailBigMin)
+        const thumbnail = this.item.metadata?.thumbnails?.find((thumb: any) => thumb.width >= thumbnailBigMin)
 
-        return thumbnail ? this.createThumbnailUrl(thumbnail) : false
+        let relative_url = ''
+        if (this.item.filename.lastIndexOf('/') !== -1) {
+            relative_url = this.item.filename.substring(0, this.item.filename.lastIndexOf('/') + 1)
+        }
+
+        if ((thumbnail?.relative_path ?? null) === null) return false
+
+        return `${this.apiUrl}/server/files/gcodes/${encodeURI(relative_url + thumbnail?.relative_path)}?timestamp=${
+            this.item.metadata.modified
+        }`
     }
 
     get statusIcon() {
@@ -313,17 +330,6 @@ export default class HistoryListPanel extends Mixins(BaseMixin) {
             default:
                 return value
         }
-    }
-
-    createThumbnailUrl(thumbnail: FileStateFileThumbnail) {
-        let relative_url = ''
-        if (this.item.filename.lastIndexOf('/') !== -1) {
-            relative_url = this.item.filename.substring(0, this.item.filename.lastIndexOf('/') + 1)
-        }
-
-        return `${this.apiUrl}/server/files/gcodes/${encodeURI(relative_url + thumbnail.relative_path)}?timestamp=${
-            this.item.metadata.modified
-        }`
     }
 }
 </script>

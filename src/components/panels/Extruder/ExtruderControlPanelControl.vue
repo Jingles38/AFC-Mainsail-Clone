@@ -93,7 +93,7 @@
                             <template #activator="{ on }">
                                 <div v-on="on">
                                     <v-btn
-                                        :loading="loadings.includes('btnExtrude')"
+                                        :loading="loadings.includes('btnDetract')"
                                         :disabled="!extrudePossible || tooLargeExtrusion || printerIsPrintingOnly"
                                         small
                                         class="_btn-extruder-cmd"
@@ -157,7 +157,7 @@
                                     <template #activator="{ on }">
                                         <div class="pt-1 pb-2 px-3" v-on="on">
                                             <v-btn
-                                                :loading="loadings.includes('btnExtrude')"
+                                                :loading="loadings.includes('btnDetract')"
                                                 :disabled="
                                                     !extrudePossible || tooLargeExtrusion || printerIsPrintingOnly
                                                 "
@@ -263,22 +263,15 @@ export default class ExtruderControlPanel extends Mixins(BaseMixin, ExtruderMixi
     }
 
     sendRetract(): void {
-        this.sendCommand(this.feedamount * -1, 'btnRetract')
+        const gcode = `M83\nG1 E-${this.feedamount} F${this.feedrate * 60}`
+        this.$store.dispatch('server/addEvent', { message: gcode, type: 'command' })
+        this.$socket.emit('printer.gcode.script', { script: gcode }, { loading: 'btnRetract' })
     }
 
     sendExtrude(): void {
-        this.sendCommand(this.feedamount, 'btnExtrude')
-    }
-
-    sendCommand(length: number, loading: string): void {
-        const gcode =
-            `SAVE_GCODE_STATE NAME=_ui_extrude\n` +
-            `M83\n` +
-            `G1 E${length} F${this.feedrate * 60}\n` +
-            `RESTORE_GCODE_STATE NAME=_ui_extrude`
-
+        const gcode = `M83\nG1 E${this.feedamount} F${this.feedrate * 60}`
         this.$store.dispatch('server/addEvent', { message: gcode, type: 'command' })
-        this.$socket.emit('printer.gcode.script', { script: gcode }, { loading })
+        this.$socket.emit('printer.gcode.script', { script: gcode }, { loading: 'btnDetract' })
     }
 }
 </script>

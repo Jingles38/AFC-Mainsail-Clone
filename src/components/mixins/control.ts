@@ -64,19 +64,6 @@ export default class ControlMixin extends Vue {
         return this.$store.getters['gui/getDefaultControlActionButton']
     }
 
-    get actionButton(): string {
-        const button = this.$store.state.gui.control.actionButton ?? this.defaultActionButton
-
-        if (
-            (button === 'qgl' && !this.$store.getters['printer/existsQGL']) ||
-            (button === 'ztilt' && !this.$store.getters['printer/existsZTilt'])
-        ) {
-            return this.defaultActionButton
-        }
-
-        return button
-    }
-
     /**
      * Axes home states
      */
@@ -148,11 +135,9 @@ export default class ControlMixin extends Vue {
     }
 
     doSendMove(gcode: string, feedrate: number) {
-        gcode =
-            `SAVE_GCODE_STATE NAME=_ui_movement\n` +
-            `G91\n` +
-            `G1 ${gcode} F${feedrate * 60}\n` +
-            `RESTORE_GCODE_STATE NAME=_ui_movement`
+        gcode = 'G91' + '\n' + 'G1 ' + gcode + ' F' + feedrate * 60
+
+        if (this.absolute_coordinates) gcode += '\nG90'
 
         this.doSend(gcode)
     }

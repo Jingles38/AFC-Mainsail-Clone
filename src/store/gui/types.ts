@@ -108,7 +108,6 @@ export interface GuiState {
         confirmOnEmergencyStop: boolean
         confirmOnCoolDown: boolean
         confirmOnPowerDeviceChange: boolean
-        confirmOnCancelJob: boolean
         boolBigThumbnail: boolean
         bigThumbnailBackground: string
         boolWideNavDrawer: boolean

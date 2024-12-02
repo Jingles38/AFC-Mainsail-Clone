@@ -1,7 +1,7 @@
 import { getDefaultState } from './index'
 import { MutationTree } from 'vuex'
 import { GcodeviewerState } from '@/store/gcodeviewer/types'
-import Vue, { markRaw } from 'vue'
+import Vue from 'vue'
 
 export const mutations: MutationTree<GcodeviewerState> = {
     reset(state) {
@@ -9,7 +9,7 @@ export const mutations: MutationTree<GcodeviewerState> = {
     },
 
     setViewerBackup(state, backup) {
-        Vue.set(state, 'viewerBackup', markRaw(backup) /* viewer object is large and quite slow to proxy */)
+        Vue.set(state, 'viewerBackup', backup)
     },
 
     setCanvasBackup(state, backup) {

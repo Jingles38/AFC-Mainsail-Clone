@@ -86,12 +86,11 @@ export const getDefaultState = (): GuiState => {
                 { name: 'macros', visible: true },
                 { name: 'machine-settings', visible: true },
                 { name: 'miscellaneous', visible: true },
-                { name: 'afc', visible: true },
             ],
             tabletLayout2: [
                 { name: 'temperature', visible: true },
-                { name: 'miniconsole', visible: true },
                 { name: 'afc', visible: true },
+                { name: 'miniconsole', visible: true },
             ],
             desktopLayout1: [
                 { name: 'webcam', visible: true },
@@ -100,7 +99,6 @@ export const getDefaultState = (): GuiState => {
                 { name: 'macros', visible: true },
                 { name: 'machine-settings', visible: true },
                 { name: 'miscellaneous', visible: true },
-                { name: 'afc', visible: true },
             ],
             desktopLayout2: [
                 { name: 'temperature', visible: true },
@@ -112,7 +110,6 @@ export const getDefaultState = (): GuiState => {
                 { name: 'extruder-control', visible: true },
                 { name: 'macros', visible: true },
                 { name: 'miscellaneous', visible: true },
-                { name: 'afc', visible: true },
             ],
             widescreenLayout2: [
                 { name: 'temperature', visible: true },
@@ -122,7 +119,6 @@ export const getDefaultState = (): GuiState => {
             widescreenLayout3: [
                 { name: 'webcam', visible: true },
                 { name: 'miniconsole', visible: true },
-                { name: 'afc', visible: true },
             ],
         },
         editor: {
@@ -174,7 +170,6 @@ export const getDefaultState = (): GuiState => {
             confirmOnEmergencyStop: false,
             confirmOnCoolDown: false,
             confirmOnPowerDeviceChange: false,
-            confirmOnCancelJob: false,
             boolBigThumbnail: true,
             bigThumbnailBackground: defaultBigThumbnailBackground,
             boolWideNavDrawer: false,

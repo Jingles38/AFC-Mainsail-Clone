@@ -38,8 +38,8 @@ export const initableServerComponents = [
     'jobQueue',
     'announcements',
     'spoolman',
-    'sensor',
     'afc',
+    'sensor',
 ]
 
 /*
@@ -94,9 +94,9 @@ export const allDashboardPanels = [
     'miniconsole',
     'miscellaneous',
     'spoolman',
+    'afc',
     'temperature',
     'webcam',
-    'afc',
 ]
 
 export const thumbnailSmallMin = 30
@@ -183,7 +183,6 @@ export const themes: Theme[] = [
         colorLogo: '#FF0000',
         logo: { show: true, light: false },
         sidebarBackground: { show: true, light: false },
-        css: true,
     },
     {
         name: 'prusa',

@@ -376,6 +376,10 @@ export default class CrossControl extends Mixins(BaseMixin, ControlMixin) {
     mdiEngineOff = mdiEngineOff
     mdiHome = mdiHome
 
+    get actionButton(): string {
+        return this.$store.state.gui.control.actionButton ?? this.defaultActionButton
+    }
+
     /**
      * Step size selection
      */

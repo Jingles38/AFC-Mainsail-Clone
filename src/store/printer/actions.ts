@@ -16,13 +16,14 @@ export const actions: ActionTree<PrinterState, RootState> = {
 
         dispatch('socket/addInitModule', 'printer/info', { root: true })
         dispatch('socket/addInitModule', 'printer/initSubscripts', { root: true })
+        dispatch('socket/addInitModule', 'printer/initHelpList', { root: true })
         dispatch('socket/addInitModule', 'printer/initTempHistory', { root: true })
         dispatch('socket/addInitModule', 'server/gcode_store', { root: true })
 
         Vue.$socket.emit('printer.info', {}, { action: 'printer/getInfo' })
+        Vue.$socket.emit('printer.objects.list', {}, { action: 'printer/initSubscripts' })
+        Vue.$socket.emit('printer.gcode.help', {}, { action: 'printer/initHelpList' })
         Vue.$socket.emit('server.gcode_store', {}, { action: 'server/getGcodeStore' })
-
-        dispatch('initSubscripts')
     },
 
     getInfo({ commit, dispatch }, payload) {
@@ -45,9 +46,7 @@ export const actions: ActionTree<PrinterState, RootState> = {
         dispatch('socket/removeInitModule', 'printer/info', { root: true })
     },
 
-    async initSubscripts({ dispatch }) {
-        const payload = await Vue.$socket.emitAndWait('printer.objects.list')
-
+    initSubscripts({ dispatch }, payload) {
         let subscripts = {}
         const blocklist = ['menu']
 
@@ -57,25 +56,31 @@ export const actions: ActionTree<PrinterState, RootState> = {
             if (!blocklist.includes(nameSplit[0])) subscripts = { ...subscripts, [key]: null }
         })
 
-        if (Object.keys(subscripts).length > 0) {
-            const result = await Vue.$socket.emitAndWait('printer.objects.subscribe', { objects: subscripts }, {})
+        if (Object.keys(subscripts).length > 0)
+            Vue.$socket.emit('printer.objects.subscribe', { objects: subscripts }, { action: 'printer/getInitData' })
+        else
+            Vue.$socket.emit(
+                'server.temperature_store',
+                { include_monitors: true },
+                { action: 'printer/tempHistory/init' }
+            )
 
-            // reset screws_tilt_adjust if it exists
-            if ('screws_tilt_adjust' in result.status) {
-                result.status.screws_tilt_adjust.error = false
-                result.status.screws_tilt_adjust.results = {}
-            }
+        dispatch('socket/removeInitModule', 'printer/initSubscripts', { root: true })
+    },
 
-            dispatch('getData', result)
-
-            setTimeout(() => {
-                dispatch('initExtruderCanExtrude')
-            }, 200)
+    getInitData({ dispatch }, payload) {
+        if ('screws_tilt_adjust' in payload.status) {
+            payload.status.screws_tilt_adjust.error = false
+            payload.status.screws_tilt_adjust.results = {}
         }
+
+        dispatch('getData', payload)
 
         Vue.$socket.emit('server.temperature_store', { include_monitors: true }, { action: 'printer/tempHistory/init' })
 
-        dispatch('socket/removeInitModule', 'printer/initSubscripts', { root: true })
+        setTimeout(() => {
+            dispatch('initExtruderCanExtrude')
+        }, 200)
     },
 
     getData({ commit, dispatch, state }, payload) {
@@ -130,13 +135,7 @@ export const actions: ActionTree<PrinterState, RootState> = {
         commit('setData', payload)
     },
 
-    async initGcodes({ commit }) {
-        const gcodes = await Vue.$socket.emitAndWait('printer.objects.query', { objects: { gcode: ['commands'] } }, {})
-
-        commit('setData', gcodes.status)
-    },
-
-    async initExtruderCanExtrude({ dispatch, state }) {
+    initExtruderCanExtrude({ state }) {
         const extruderList: string[] = Object.keys(state).filter((name) => name.startsWith('extruder'))
         const reInitList: { [key: string]: string[] } = {}
 
@@ -144,8 +143,13 @@ export const actions: ActionTree<PrinterState, RootState> = {
             reInitList[extruderName] = ['can_extrude']
         })
 
-        const result = await Vue.$socket.emitAndWait('printer.objects.query', { objects: reInitList }, {})
-        dispatch('getData', result.status)
+        Vue.$socket.emit('printer.objects.query', { objects: reInitList }, { action: 'printer/getData' })
+    },
+
+    initHelpList({ commit, dispatch }, payload) {
+        commit('setHelplist', payload)
+
+        dispatch('socket/removeInitModule', 'printer/initHelpList', { root: true })
     },
 
     getEndstopStatus({ commit }, payload) {
@@ -161,10 +165,9 @@ export const actions: ActionTree<PrinterState, RootState> = {
 
         if (payload.toLowerCase().trim() === 'm112') {
             Vue.$socket.emit('printer.emergency_stop', {}, { loading: 'sendGcode' })
-            return
+        } else {
+            Vue.$socket.emit('printer.gcode.script', { script: payload }, { loading: 'sendGcode' })
         }
-
-        Vue.$socket.emit('printer.gcode.script', { script: payload }, { loading: 'sendGcode' })
     },
 
     clearScrewsTiltAdjust({ commit }) {

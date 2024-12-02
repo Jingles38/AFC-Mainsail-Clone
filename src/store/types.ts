@@ -56,5 +56,4 @@ export interface Theme {
         show: boolean
         light: boolean
     }
-    css?: boolean
 }
