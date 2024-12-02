@@ -388,11 +388,12 @@ export default class AfcPanel extends Mixins(BaseMixin) {
         border-color: black;
         padding: 8px;
         max-width: 180px;
+        min-height: 117px;
         width: 100%;
         position: relative;
         cursor: hand;
         transition: box-shadow 0.3s;
-        margin-bottom: 6px;
+        margin-bottom: 0px;
 }
 
 
