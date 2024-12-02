@@ -382,7 +382,7 @@ export default class AfcPanel extends Mixins(BaseMixin) {
     }
 
     handleRunoutChange(event: Event, spool: any) {
-        const selectedValue = (event.target as HTMLSelectElement.value));
+        const selectedValue = (event.target as HTMLSelectElement.value);
         console.log(Selected value for ${spool.laneName}: ${selectedValue});
 
         const gcode = SET_RUNOUT LANE=${spool.laneName} RUNOUT=${selectedValue}
