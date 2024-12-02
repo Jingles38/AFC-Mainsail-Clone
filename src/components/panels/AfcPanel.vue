@@ -383,7 +383,7 @@ export default class AfcPanel extends Mixins(BaseMixin) {
 
     handleRunoutChange(event: Event, spool: any) {
         const selectedValue = (event.target as HTMLSelectElement.value);
-        console.log(Selected value for ${spool.laneName}: ${selectedValue});
+        console.log(Selectedvalue for ${spool.laneName}: ${selectedValue});
 
         const gcode = SET_RUNOUT LANE=${spool.laneName} RUNOUT=${selectedValue}
         console.log('Dispatching G-code:', gcode)
@@ -399,7 +399,7 @@ export default class AfcPanel extends Mixins(BaseMixin) {
 
     handleMapChange(event: Event, spool: any) {
         const selectedValue = (event.target as HTMLSelectElement).value);
-        console.log(Selected value for ${spool.laneName}: ${selectedValue});
+        console.log(Selectedvalue for ${spool.laneName}: ${selectedValue});
 
         const gcode = SET_MAP LANE=${spool.laneName} MAP=${selectedValue}
         console.log('Dispatching G-code:', gcode)
