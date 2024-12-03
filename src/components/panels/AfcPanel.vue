@@ -405,17 +405,21 @@ import InfinityIcon from '@/components/ui/InfinityIcon.vue'
         }
 
         private determineStatus(spool: any) {
-            if (spool.load && spool.prep) {
-                if (this.systemData && this.systemData.current_load === spool.laneName) {
-                    if (spool.spool_id == this.$store.state.server.spoolman.active_spool?.id) {
-                        spool.weight = this.$store.state.server.spoolman.active_spool?.remaining_weight
+            if (spool.prep) {
+                if (spool.load) {
+                    if (this.systemData && this.systemData.current_load === spool.laneName) {
+                        if (spool.spool_id == this.$store.state.server.spoolman.active_spool?.id) {
+                            spool.weight = this.$store.state.server.spoolman.active_spool?.remaining_weight;
+                        }
+                        return "In Tool";
                     }
-                    return 'In Tool'
+                    return "Ready";
                 }
-                return 'Ready'
+                return "Prep";
             }
-            return 'Not Ready'
+            return "Not Ready";
         }
+    }
 </script>
 
 <style scoped>
