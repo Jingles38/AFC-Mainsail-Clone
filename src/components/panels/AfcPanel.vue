@@ -231,192 +231,191 @@ import { AFCRoot } from '@/store/server/afc'
 import BoxTurtleIcon from '@/components/ui/BoxTurtleIcon.vue'
 import InfinityIcon from '@/components/ui/InfinityIcon.vue'
 
-@Component({
-    components: {
-        Panel,
-        AfcChangeSpoolDialog,
-        SpoolIcon,
-        FilamentReelIcon,
-        BoxTurtleIcon,
-        InfinityIcon
-    },
-})
-export default class AfcPanel extends Mixins(BaseMixin) {
-    mdiAdjust = mdiAdjust
-    mdiRefresh = mdiRefresh
-    mdiDotsVertical = mdiDotsVertical
+    @Component({
+        components: {
+            Panel,
+            AfcChangeSpoolDialog,
+            SpoolIcon,
+            FilamentReelIcon,
+            BoxTurtleIcon,
+            InfinityIcon
+        },
+    })
+    export default class AfcPanel extends Mixins(BaseMixin) {
+        mdiAdjust = mdiAdjust
+        mdiRefresh = mdiRefresh
+        mdiDotsVertical = mdiDotsVertical
 
-    showChangeSpoolDialog = false
-    selectedLane: any = null // This will hold data of the clicked lane
+        showChangeSpoolDialog = false
+        selectedLane: any = null // This will hold data of the clicked lane
 
-    spoolData: any[] = []
-    intervalId: number | null = null
-    systemData: any = null
-    index: number = 0
-    unitsData: any = {}
-    mapList: any[] = []
-    laneList: any[] = []
+        spoolData: any[] = []
+        intervalId: number | null = null
+        systemData: any = null
+        index: number = 0
+        unitsData: any = {}
+        mapList: any[] = []
+        laneList: any[] = []
 
-    selectedStyle: number = 1
-    styleIndex: number = 1
+        selectedStyle: number = 1
+        styleIndex: number = 1
 
-    async mounted() {
-        const savedStyleIndex = localStorage.getItem('styleIndex')
-        if (savedStyleIndex !== null) {
-            this.styleIndex = parseInt(savedStyleIndex, 10)
+        async mounted() {
+            const savedStyleIndex = localStorage.getItem('styleIndex')
+            if (savedStyleIndex !== null) {
+                this.styleIndex = parseInt(savedStyleIndex, 10)
+            }
+            this.fetchSpoolData()
+            this.intervalId = setInterval(this.fetchSpoolData, 50)
         }
-        this.fetchSpoolData()
-        this.intervalId = setInterval(this.fetchSpoolData, 50)
-    }
 
-    beforeDestroy() {
-        if (this.intervalId) {
-            clearInterval(this.intervalId)
+        beforeDestroy() {
+            if (this.intervalId) {
+                clearInterval(this.intervalId)
+            }
         }
-    }
 
-    get afc_Data(): AFCRoot | null {
-        return this.$store.state.printer.AFC
-    }
+        get afc_Data(): AFCRoot | null {
+            return this.$store.state.printer.AFC
+        }
 
-    fetchSpoolData() {
-        const afcData = this.afc_Data ? JSON.parse(JSON.stringify(this.afc_Data)) : null
+        fetchSpoolData() {
+            const afcData = this.afc_Data ? JSON.parse(JSON.stringify(this.afc_Data)) : null
 
-        if (afcData) {
-            this.spoolData = this.extractLaneData(afcData)
-            this.unitsData = this.groupByUnit(this.spoolData)
-            this.systemData = afcData.system || {}
-            for (const unitName in afcData) {
-                if (afcData.hasOwnProperty(unitName) && unitName !== 'system') {
-                    if (this.unitsData[unitName]) {
-                        this.unitsData[unitName].system = afcData[unitName].system || {}
+            if (afcData) {
+                this.spoolData = this.extractLaneData(afcData)
+                this.unitsData = this.groupByUnit(this.spoolData)
+                this.systemData = afcData.system || {}
+                for (const unitName in afcData) {
+                    if (afcData.hasOwnProperty(unitName) && unitName !== 'system') {
+                        if (this.unitsData[unitName]) {
+                            this.unitsData[unitName].system = afcData[unitName].system || {}
+                        }
                     }
                 }
+            } else {
+                this.spoolData = []
+                this.unitsData = {}
+                this.systemData = {}
             }
-        } else {
-            this.spoolData = []
-            this.unitsData = {}
-            this.systemData = {}
         }
-    }
 
-    extractLaneData(spools: any) {
-        const lanes = []
-        this.mapList = []
-        this.laneList = []
-        if (spools && typeof spools === 'object') {
-            for (const unitName in spools) {
-                if (spools.hasOwnProperty(unitName) && unitName !== 'system') {
-                    const unit = spools[unitName]
-                    for (const laneKey in unit) {
-                        if (unit.hasOwnProperty(laneKey) && typeof unit[laneKey] === 'object' && laneKey !== 'system') {
-                            const laneData = unit[laneKey]
-                            laneData.unitName = unitName
-                            laneData.laneName = laneKey
-                            lanes.push(laneData)
-                            this.laneList.push(laneKey)
-                            this.mapList.push(unit[laneKey]['map'])
+        extractLaneData(spools: any) {
+            const lanes = []
+            this.mapList = []
+            this.laneList = []
+            if (spools && typeof spools === 'object') {
+                for (const unitName in spools) {
+                    if (spools.hasOwnProperty(unitName) && unitName !== 'system') {
+                        const unit = spools[unitName]
+                        for (const laneKey in unit) {
+                            if (unit.hasOwnProperty(laneKey) && typeof unit[laneKey] === 'object' && laneKey !== 'system') {
+                                const laneData = unit[laneKey]
+                                laneData.unitName = unitName
+                                laneData.laneName = laneKey
+                                lanes.push(laneData)
+                                this.laneList.push(laneKey)
+                                this.mapList.push(unit[laneKey]['map'])
+                            }
                         }
                     }
                 }
             }
+            this.laneList = this.laneList.sort()
+            this.mapList = this.mapList.sort()
+            return lanes
         }
-        this.laneList = this.laneList.sort()
-        this.mapList = this.mapList.sort()
-        return lanes
-    }
 
-    saveStyleIndex(changer: number) {
-        this.styleIndex = changer
-        localStorage.setItem('styleIndex', changer.toString())
-    }
-
-    private groupByUnit(spoolData: any[]) {
-        const units: any = {}
-        spoolData.forEach((spool) => {
-            const unitName = spool.unitName
-            if (!units[unitName]) {
-                units[unitName] = { spools: [] }
-            }
-            units[unitName].spools.push(spool)
-        })
-        return units
-    }
-
-    openChangeSpoolDialog(spool: any) {
-        this.selectedLane = { spool, laneName: spool.laneName }
-        this.showChangeSpoolDialog = true
-    }
-
-    bufferStatus() {
-        return this.systemData?.extruders?.extruder?.buffer_status || false
-    }
-
-    getHubStatus({ unitName }: { unitName: any }) {
-        if (this.unitsData[unitName]?.system?.hub_loaded !== undefined) {
-            return this.unitsData[unitName].system.hub_loaded
+        saveStyleIndex(changer: number) {
+            this.styleIndex = changer
+            localStorage.setItem('styleIndex', changer.toString())
         }
-        return this.systemData?.hub_loaded || false
-    }
 
-    get toolStartSensorStatus() {
-        return this.systemData?.extruders?.extruder?.tool_start_sensor || false
-    }
-
-    spoolWeight(spool: any) {
-        const weight = parseInt(spool.weight, 10)
-        return weight ? `${weight} g` : ''
-    }
-
-    private determineStatus(spool: any) {
-        if (spool.load && spool.prep) {
-            if (this.systemData && this.systemData.current_load === spool.laneName) {
-                if (spool.spool_id == this.$store.state.server.spoolman.active_spool?.id) {
-                    spool.weight = this.$store.state.server.spoolman.active_spool?.remaining_weight
+        private groupByUnit(spoolData: any[]) {
+            const units: any = {}
+            spoolData.forEach((spool) => {
+                const unitName = spool.unitName
+                if (!units[unitName]) {
+                    units[unitName] = { spools: [] }
                 }
-                return 'In Tool'
-            }
-            return 'Ready'
+                units[unitName].spools.push(spool)
+            })
+            return units
         }
-        return 'Not Ready'
-    }
 
-    handleRunoutChange(event: Event, spool: any) {
-        const selectedValue = (event.target as HTMLSelectElement).value;
-        console.log(`Selected value for ${spool.laneName}: ${selectedValue}`);
+        openChangeSpoolDialog(spool: any) {
+            this.selectedLane = { spool, laneName: spool.laneName }
+            this.showChangeSpoolDialog = true
+        }
 
-    //Example G-Code Call for you
-        const gcode = `SET_RUNOUT LANE=${spool.laneName} RUNOUT=${selectedValue}`
-        console.log('Dispatching G-code:', gcode)
+        bufferStatus() {
+            return this.systemData?.extruders?.extruder?.buffer_status || false
+        }
 
-        this.$nextTick(async () => {
-            try {
-                await this.$store.dispatch('printer/sendGcode', gcode)
-                console.log('G-code sent successfully')
-            } catch (error) {
-                console.error('Failed to send G-code:', error)
+        getHubStatus({ unitName }: { unitName: any }) {
+            if (this.unitsData[unitName]?.system?.hub_loaded !== undefined) {
+                return this.unitsData[unitName].system.hub_loaded
             }
-        })
-    }
+            return this.systemData?.hub_loaded || false
+        }
 
-    handleMapChange(event: Event, spool: any) {
-        const selectedValue = (event.target as HTMLSelectElement).value;
-        console.log(`Selected value for ${spool.laneName}: ${selectedValue}`);
+        get toolStartSensorStatus() {
+            return this.systemData?.extruders?.extruder?.tool_start_sensor || false
+        }
 
-        //Example G-Code Call for you
-        const gcode = `SET_MAP LANE=${spool.laneName} MAP=${selectedValue}`
-        console.log('Dispatching G-code:', gcode)
+        spoolWeight(spool: any) {
+            const weight = parseInt(spool.weight, 10)
+            return weight ? `${weight} g` : ''
+        }
 
-        this.$nextTick(async () => {
-            try {
-                await this.$store.dispatch('printer/sendGcode', gcode)
-                console.log('G-code sent successfully')
-            } catch (error) {
-                console.error('Failed to send G-code:', error)
+        handleRunoutChange(event: Event, spool: any) {
+            const selectedValue = (event.target as HTMLSelectElement).value;
+            console.log(`Selected value for ${spool.laneName}: ${selectedValue}`);
+
+            //Example G-Code Call for you
+            const gcode = `SET_RUNOUT LANE=${spool.laneName} RUNOUT=${selectedValue}`
+            console.log('Dispatching G-code:', gcode)
+
+            this.$nextTick(async () => {
+                try {
+                    await this.$store.dispatch('printer/sendGcode', gcode)
+                    console.log('G-code sent successfully')
+                } catch (error) {
+                    console.error('Failed to send G-code:', error)
+                }
+            })
+        }
+
+        handleMapChange(event: Event, spool: any) {
+            const selectedValue = (event.target as HTMLSelectElement).value;
+            console.log(`Selected value for ${spool.laneName}: ${selectedValue}`);
+
+            //Example G-Code Call for you
+            const gcode = `SET_MAP LANE=${spool.laneName} MAP=${selectedValue}`
+            console.log('Dispatching G-code:', gcode)
+
+            this.$nextTick(async () => {
+                try {
+                    await this.$store.dispatch('printer/sendGcode', gcode)
+                    console.log('G-code sent successfully')
+                } catch (error) {
+                    console.error('Failed to send G-code:', error)
+                }
+            })
+        }
+
+        private determineStatus(spool: any) {
+            if (spool.load && spool.prep) {
+                if (this.systemData && this.systemData.current_load === spool.laneName) {
+                    if (spool.spool_id == this.$store.state.server.spoolman.active_spool?.id) {
+                        spool.weight = this.$store.state.server.spoolman.active_spool?.remaining_weight
+                    }
+                    return 'In Tool'
+                }
+                return 'Ready'
             }
-        })
-    }
-
+            return 'Not Ready'
+        }
 </script>
 
 <style scoped>
