@@ -1,10 +1,11 @@
 ﻿<template>
     <svg
         xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 235 500"
-        width="1em"
-        height="1em"
-        :style="{ width: '2em', height: '2em' }"
+        x="0px"
+        y="0px"
+        viewBox="0 0 487.04 487.04"
+        xml:space="preserve"
+        @click="clickSpool">
     >
         <desc>Created with Fabric.js 5.3.0</desc>
         <path
@@ -71,9 +72,8 @@ export default class FilamentReelIcon extends Mixins(BaseMixin){
         return {fill:"#c08f4f"}
     }
 
-    size: {
-        type: String,
-        default: "32px", // Default size
+    clickSpool() {
+        this.$emit('click-spool')
     }
 }
 </script>

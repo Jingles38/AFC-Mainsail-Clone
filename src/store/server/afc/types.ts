@@ -1,6 +1,6 @@
 ﻿export interface Leg {
     LANE: number;
-    Command: string | null;
+    map: string | null;
     load: boolean;
     prep: boolean;
     loaded_to_hub: boolean;
@@ -8,6 +8,9 @@
     spool_id: string;
     color: string;
     weight: number | string; // Handle the mixed types (number or empty string)
+    runout_lane: string;
+    filament_status: string;
+    filament_status_led: string;
 }
 
 export interface System {

@@ -1,12 +1,10 @@
 <template>
     <div class="afc-panel-wrapper">
-        <panel
-            :icon="mdiAdjust"
-            :title="'Automated Filament Control'"
-            card-class="afc-panel"
-            :collapsible="true"
-            :expanded="true"
-        >
+        <panel :icon="mdiAdjust"
+               :title="'Automated Filament Control'"
+               card-class="afc-panel"
+               :collapsible="true"
+               :expanded="true">
             <template #buttons>
                 <v-btn icon tile :title="'Refresh AFC Spools'" @click="fetchSpoolData">
                     <v-icon>{{ mdiRefresh }}</v-icon>
@@ -30,13 +28,11 @@
             <div class="status-wrapper">
                 <div class="tool-status">
                     <strong>Tool:</strong>
-                    <span
-                        :class="{
+                    <span :class="{
                             'status-light': true,
                             'status-green': toolStartSensorStatus,
                             'status-red': !toolStartSensorStatus,
-                        }"
-                    ></span>
+                        }"></span>
                 </div>
                 <div class="buffer-status">
                     <span v-if="systemData?.extruders?.extruder?.buffer_status">
@@ -47,41 +43,41 @@
             <div v-for="(unit, unitName) in unitsData"
                  :key="unitName"
                  class="unit-section">
-                    <v-expansion-panels>
-                        <v-expansion-panel>
-                            <v-expansion-panel-header>
-                                <div class="unit-header"
-                                    style="display: flex; align-items: center; gap: 10px">
-                                    <BoxTurtleIcon v-if="unitsData[unitName]?.system?.type === 'Box_Turtle'"
-                                        style="width: 12%; height: 12%; margin-left: 10px;" />
-                                    <h2 class="unit-title" style="margin: 0">
-                                        {{ String(unitName).replace(/_/g, " ") }} |
-                                    </h2>
-                                    <span class="hub-status">
-                                        <span><strong>Hub</strong></span>
-                                        <span :class="{
+                <v-expansion-panels>
+                    <v-expansion-panel>
+                        <v-expansion-panel-header>
+                            <div class="unit-header"
+                                 style="display: flex; align-items: center; gap: 10px">
+                                <BoxTurtleIcon v-if="unitsData[unitName]?.system?.type === 'Box_Turtle'"
+                                               style="width: 12%; height: 12%; margin-left: 10px;" />
+                                <h2 class="unit-title" style="margin: 0">
+                                    {{ String(unitName).replace(/_/g, " ") }} |
+                                </h2>
+                                <span class="hub-status">
+                                    <span><strong>Hub</strong></span>
+                                    <span :class="{
                                             'status-light': true,
                                             'status-green': getHubStatus({unitName : unitName}),
                                             'status-red': !getHubStatus({unitName : unitName}),
                                             }">
-                                        </span>
                                     </span>
-                                </div>
-                            </v-expansion-panel-header>
-                            <v-expansion-panel-content style="padding-top: 0em;">
-                                <div class="spool-container" style="margin-top: 0px">
+                                </span>
+                            </div>
+                        </v-expansion-panel-header>
+                        <v-expansion-panel-content style="padding-top: 0em;">
+                            <div class="spool-container" style="margin-top: 0px">
                                 <div v-for="(spool, index) in unit.spools"
-                                    :key="index"
-                                    class="spool-card">
+                                     :key="index"
+                                     class="spool-card">
                                     <div class="filament-reel"
-                                        style="padding: 1rem"
-                                        :key="index"
-                                        @click="openChangeSpoolDialog(spool)">
+                                         style="padding: 1rem"
+                                         :key="index"
+                                         @click="openChangeSpoolDialog(spool)">
                                         <svg viewBox="0 0 235 500" preserveAspectRatio="xMinYMin meet" width="23.5" height="50" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
-                                            <path style="stroke:#6e0b30;stroke-width:0;stroke-dasharray:none;stroke-linecap:butt;stroke-dashoffset:0;stroke-linejoin:miter;stroke-miterlimit:4;fill:#c08f4f;fill-rule:nonzero;opacity:1" vector-effect="non-scaling-stroke" transform="matrix(.58757 0 0 3.94769 197.135 250.047)" d="M0-63.27c34.925 0 63.27 28.345 63.27 63.27 0 34.925-28.345 63.27-63.27 63.27-34.925 0-63.27-28.345-63.27-63.27 0-34.925 28.345-63.27 63.27-63.27z" />
-                                            <path style="stroke:#6e0b30;stroke-width:0;stroke-dasharray:none;stroke-linecap:butt;stroke-dashoffset:0;stroke-linejoin:miter;stroke-miterlimit:4;fill:#c08f4f;fill-rule:nonzero;opacity:1" vector-effect="non-scaling-stroke" transform="matrix(.38158 0 0 3.46232 197.135 250.047)" d="M0-63.27c34.925 0 63.27 28.345 63.27 63.27 0 34.925-28.345 63.27-63.27 63.27-34.925 0-63.27-28.345-63.27-63.27 0-34.925 28.345-63.27 63.27-63.27z" />
-                                            <path v-if="spool.load" class="filament-reel"
-                                                    :style="{
+                                        <path style="stroke:#6e0b30;stroke-width:0;stroke-dasharray:none;stroke-linecap:butt;stroke-dashoffset:0;stroke-linejoin:miter;stroke-miterlimit:4;fill:#c08f4f;fill-rule:nonzero;opacity:1" vector-effect="non-scaling-stroke" transform="matrix(.58757 0 0 3.94769 197.135 250.047)" d="M0-63.27c34.925 0 63.27 28.345 63.27 63.27 0 34.925-28.345 63.27-63.27 63.27-34.925 0-63.27-28.345-63.27-63.27 0-34.925 28.345-63.27 63.27-63.27z" />
+                                        <path style="stroke:#6e0b30;stroke-width:0;stroke-dasharray:none;stroke-linecap:butt;stroke-dashoffset:0;stroke-linejoin:miter;stroke-miterlimit:4;fill:#c08f4f;fill-rule:nonzero;opacity:1" vector-effect="non-scaling-stroke" transform="matrix(.38158 0 0 3.46232 197.135 250.047)" d="M0-63.27c34.925 0 63.27 28.345 63.27 63.27 0 34.925-28.345 63.27-63.27 63.27-34.925 0-63.27-28.345-63.27-63.27 0-34.925 28.345-63.27 63.27-63.27z" />
+                                        <path v-if="spool.load" class="filament-reel"
+                                              :style="{
                                                         fill: spool.color,
                                                         stroke: '#000',
                                                         strokeWidth: 0,
@@ -93,22 +89,22 @@
                                                         fillRule: 'nonzero',
                                                         opacity: 1
                                                     }"
-                                                    vector-effect="non-scaling-stroke"
-                                                    transform="matrix(2.07364 0 0 3.3577 117.295 250.047)"
-                                                    d="M-38.503-65.24h77.006V65.24h-77.006z" />
-                                                <g transform="matrix(.58757 0 0 3.94769 37.454 250.047)">
-                                                    <filter id="a" y="-.057" height="1.114" x="-.057" width="1.272">
-                                                        <feGaussianBlur in="SourceAlpha" stdDeviation="3" />
-                                                        <feOffset dx="20" result="oBlur" />
-                                                        <feFlood flood-color="rgb(0,0,0)" flood-opacity=".67" />
-                                                        <feComposite in2="oBlur" operator="in" />
-                                                        <feMerge>
-                                                            <feMergeNode />
-                                                            <feMergeNode in="SourceGraphic" />
+                                              vector-effect="non-scaling-stroke"
+                                              transform="matrix(2.07364 0 0 3.3577 117.295 250.047)"
+                                              d="M-38.503-65.24h77.006V65.24h-77.006z" />
+                                        <g transform="matrix(.58757 0 0 3.94769 37.454 250.047)">
+                                        <filter id="a" y="-.057" height="1.114" x="-.057" width="1.272">
+                                        <feGaussianBlur in="SourceAlpha" stdDeviation="3" />
+                                        <feOffset dx="20" result="oBlur" />
+                                        <feFlood flood-color="rgb(0,0,0)" flood-opacity=".67" />
+                                        <feComposite in2="oBlur" operator="in" />
+                                        <feMerge>
+                                        <feMergeNode />
+                                        <feMergeNode in="SourceGraphic" />
                                                         </feMerge>
                                                     </filter>
-                                                    <path style="stroke:#6e0b30;stroke-width:0;stroke-dasharray:none;stroke-linecap:butt;stroke-dashoffset:0;stroke-linejoin:miter;stroke-miterlimit:4;fill:#c08f4f;fill-rule:nonzero;opacity:1;filter:url(#a)" vector-effect="non-scaling-stroke" d="M0-63.27c34.925 0 63.27 28.345 63.27 63.27 0 34.925-28.345 63.27-63.27 63.27-34.925 0-63.27-28.345-63.27-63.27 0-34.925 28.345-63.27 63.27-63.27z" />
-                                                    <path style="stroke:#6e0b30;stroke-width:0;stroke-dasharray:none;stroke-linecap:butt;stroke-dashoffset:0;stroke-linejoin:miter;stroke-miterlimit:4;fill:#c08f4f;fill-rule:nonzero;opacity:1" vector-effect="non-scaling-stroke" transform="scale(.41452)" d="M0-63.27c34.925 0 63.27 28.345 63.27 63.27 0 34.925-28.345 63.27-63.27 63.27-34.925 0-63.27-28.345-63.27-63.27 0-34.925 28.345-63.27 63.27-63.27z" />
+                                        <path style="stroke:#6e0b30;stroke-width:0;stroke-dasharray:none;stroke-linecap:butt;stroke-dashoffset:0;stroke-linejoin:miter;stroke-miterlimit:4;fill:#c08f4f;fill-rule:nonzero;opacity:1;filter:url(#a)" vector-effect="non-scaling-stroke" d="M0-63.27c34.925 0 63.27 28.345 63.27 63.27 0 34.925-28.345 63.27-63.27 63.27-34.925 0-63.27-28.345-63.27-63.27 0-34.925 28.345-63.27 63.27-63.27z" />
+                                        <path style="stroke:#6e0b30;stroke-width:0;stroke-dasharray:none;stroke-linecap:butt;stroke-dashoffset:0;stroke-linejoin:miter;stroke-miterlimit:4;fill:#c08f4f;fill-rule:nonzero;opacity:1" vector-effect="non-scaling-stroke" transform="scale(.41452)" d="M0-63.27c34.925 0 63.27 28.345 63.27 63.27 0 34.925-28.345 63.27-63.27 63.27-34.925 0-63.27-28.345-63.27-63.27 0-34.925 28.345-63.27 63.27-63.27z" />
                                                 </g>
                                         </svg>
                                     </div>
@@ -126,9 +122,14 @@
                                         <select :name="'map-' +spool.laneName"
                                                 class="afclist"
                                                 @change="handleMapChange($event, spool)">
-                                            
+
                                             <template v-for="option in mapList" v-bind:value="option">
-                                                <template v-if="option === spool.map">
+                                                <template v-if="spool.map === ''">
+                                                    <option :value="None">
+                                                        NONE
+                                                    </option>
+                                                </template>
+                                                <template v-else-if="option === spool.map">
                                                     <option :value="option" selected>
                                                         {{ option }}
                                                     </option>
@@ -141,7 +142,7 @@
                                             </template>
                                         </select>
                                     </div>
-                                    <svg v-if="spool.runout_lane === ''"
+                                    <svg v-if="spool.runout_lane === 'NONE'"
                                          fill="#FF0000"
                                          height="20px"
                                          width="20px"
@@ -156,13 +157,13 @@
                                         s-4.836,11.5-10.781,11.5c-2.879,0-5.586-1.195-7.622-3.366c-1.062-1.133-2.915-1.133-3.978,0c-0.531,0.567-0.823,1.32-0.823,2.121
                                         c0,0.802,0.293,1.556,0.824,2.121c3.098,3.305,7.218,5.124,11.599,5.124C52.64,47.5,60,39.649,60,30S52.64,12.5,43.594,12.5z" />
                                     </svg>
-                                    <svg v-else="spool.runout_lane === ''"
+                                    <svg v-else
                                          fill="#00FF00"
                                          height="20px"
                                          width="20px"
                                          version="1.1"
                                          id="Capa_1"
-                                         style="float: right; margin-top: 2px;"
+                                         style="float: right; margin-top: 2px; margin-left: 5px;"
                                          viewBox="0 0 60 60" xml:space="preserve">
                                     <path d="M43.594,12.5c-9.046,0-16.406,7.851-16.406,17.5c0,6.341-4.836,11.5-10.781,11.5S5.625,36.341,5.625,30
 	                                        s4.836-11.5,10.781-11.5c2.146,0,4.218,0.67,5.992,1.938c0.593,0.425,1.147,0.911,1.645,1.445c1.061,1.136,2.914,1.14,3.977,0.009
@@ -171,29 +172,17 @@
 	                                        s-4.836,11.5-10.781,11.5c-2.879,0-5.586-1.195-7.622-3.366c-1.062-1.133-2.915-1.133-3.978,0c-0.531,0.567-0.823,1.32-0.823,2.121
 	                                        c0,0.802,0.293,1.556,0.824,2.121c3.098,3.305,7.218,5.124,11.599,5.124C52.64,47.5,60,39.649,60,30S52.64,12.5,43.594,12.5z" />
                                     </svg>
-                                    <select :name="'run-' + spool.laneName"
+                                    <select :name="'run-' +spool.laneName"
                                             class="afclist"
-                                            stlye="float: left;"
                                             @change="handleRunoutChange($event, spool)">
-
-                                    <template v-if="spool.runout_lane === ''">
-                                    <option :value="''" selected>
-                                                NONE
-                                            </option>
-                                        </template>
-                                    <template v-else>
-                                    <option :value="''">
-                                                NONE
-                                            </option>
-                                        </template>
-                                    <template v-for="option in laneList" v-bind:value="option">
-                                    <template v-if="option === spool.runout_lane">
-                                    <option :value="option" selected>
+                                        <template v-for="option in laneList" v-bind:value="option">
+                                            <template v-if="option === spool.runout_lane">
+                                                <option :value="option" selected>
                                                     {{ option }}
                                                 </option>
                                             </template>
-                                    <template v-else>
-                                    <option :value="option">
+                                            <template v-else>
+                                                <option :value="option">
                                                     {{ option }}
                                                 </option>
                                             </template>
@@ -204,23 +193,20 @@
                                 </div>
                             </div>
                         </v-expansion-panel-content>
-                        </v-expansion-panel>
-                    </v-expansion-panels>
+                    </v-expansion-panel>
+                </v-expansion-panels>
             </div>
 
         </panel>
-        <afc-change-spool-dialog
-            :show-dialog="showChangeSpoolDialog"
-            :index="index"
-            :lane-data="selectedLane"
-            @close="showChangeSpoolDialog = false"
-            @fetch-spool="fetchSpoolData"
-        />
+        <afc-change-spool-dialog :show-dialog="showChangeSpoolDialog"
+                                 :index="index"
+                                 :lane-data="selectedLane"
+                                 @close="showChangeSpoolDialog = false"
+                                 @fetch-spool="fetchSpoolData" />
     </div>
 </template>
 
-<script lang="ts">
-import { Component, Mixins } from "vue-property-decorator";
+<script lang="ts">import { Component, Mixins } from "vue-property-decorator";
 import BaseMixin from "@/components/mixins/base";
 import Panel from "@/components/ui/Panel.vue";
 import { mdiAdjust, mdiRefresh, mdiDotsVertical } from "@mdi/js";
@@ -323,8 +309,9 @@ export default class AfcPanel extends Mixins(BaseMixin) {
                 }
             }
         }
-        this.laneList=laneList.sort()
-        this.mapList = mapList.sort()
+        this.laneList=laneList.sort();
+        this.laneList.unshift('NONE');
+        this.mapList = mapList.sort();
         return lanes;
     }
 
@@ -354,7 +341,7 @@ export default class AfcPanel extends Mixins(BaseMixin) {
     bufferStatus() {
         return this.systemData?.extruders?.extruder?.buffer_status || false;
     }
-    
+
     getHubStatus({ unitName }: { unitName: any }) {
         if (this.unitsData[unitName]?.system?.hub_loaded !== undefined) {
             return this.unitsData[unitName].system.hub_loaded;
@@ -421,13 +408,12 @@ export default class AfcPanel extends Mixins(BaseMixin) {
         }
         return "Not Ready";
     }
-}
-</script>
+}</script>
 
 <style scoped>
-.afc-panel-wrapper {
-    margin-bottom: 24px;
-}
+    .afc-panel-wrapper {
+        margin-bottom: 24px;
+    }
 
     .spool-container {
         display: flex;
@@ -439,11 +425,11 @@ export default class AfcPanel extends Mixins(BaseMixin) {
         margin-top: 15px;
     }
 
-.unit-title {
-    font-size: 1.5em;
-    margin-bottom: 16px;
-    text-align: left;
-}
+    .unit-title {
+        font-size: 1.5em;
+        margin-bottom: 16px;
+        text-align: left;
+    }
 
     .spool-card {
         background-color: #2e2e2e;
@@ -454,28 +440,29 @@ export default class AfcPanel extends Mixins(BaseMixin) {
         flex: 1 1 calc(23% - 16px);
         max-width: 180px;
         min-width: 80px;
+        min-height: 117px;
         position: relative;
         cursor: hand;
         transition: box-shadow 0.3s;
-        margin-bottom: 8px;
+        margin-bottom: 0px;
         text-align: right;
     }
 
-.filament-reel {
-    position: absolute;
-    bottom: -10px;
-    left: -10px;
-}
+    .filament-reel {
+        position: absolute;
+        bottom: -10px;
+        left: -10px;
+    }
 
-.spool-card p {
-    margin: 4px 0;
-}
+    .spool-card p {
+        margin: 4px 0;
+    }
 
-.spool-header {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
+    .spool-header {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
 
     .afclist {
         background-color: #2e2e2e;
@@ -483,7 +470,7 @@ export default class AfcPanel extends Mixins(BaseMixin) {
         text-align: right;
     }
 
-.status-wrapper {
+    .status-wrapper {
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -503,40 +490,42 @@ export default class AfcPanel extends Mixins(BaseMixin) {
         margin-left: 5px;
     }
 
-.status-green {
-    background-color: rgb(24, 177, 24);
-}
+    .status-green {
+        background-color: rgb(24, 177, 24);
+    }
 
-.status-red {
-    background-color: red;
-}
+    .status-red {
+        background-color: red;
+    }
 
-.hub-status {
-    text-align: left;
-    margin: 15px 0;
-}
+    .hub-status {
+        text-align: left;
+        margin: 15px 0;
+    }
 
-.buffer-status {
-    display: block;
-    margin-top: 5px;
-}
+    .buffer-status {
+        display: block;
+        margin-top: 5px;
+    }
 
-.tool-status {
-    text-align: center;
-    margin-left: 15px;
-}
+    .tool-status {
+        text-align: center;
+        margin-left: 15px;
+    }
 
-.status-not-ready {
-    background-color: red;
-}
-.status-prep {
-    background-color: rgb(255, 255, 0);
-}
-.status-ready {
-    background-color: rgb(26, 230, 26);
-}
+    .status-not-ready {
+        background-color: red;
+    }
 
-.status-in-tool {
-    background-color: rgb(6, 197, 245);
-}
+    .status-prep {
+        background-color: rgb(255, 255, 0);
+    }
+
+    .status-ready {
+        background-color: rgb(26, 230, 26);
+    }
+
+    .status-in-tool {
+        background-color: rgb(6, 197, 245);
+    }
 </style>
