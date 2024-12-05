@@ -65,50 +65,26 @@
                             </div>
                         </v-expansion-panel-header>
                         <v-expansion-panel-content style="padding-top: 0em;">
-                            <div class="spool-container" style="margin-top: 0px">
+                            <div class="spool-container">
                                 <div v-for="(spool, index) in unit.spools"
+                                     style="margin-top: 0px;"
                                      :key="index"
                                      class="spool-card">
                                     <div class="filament-reel"
                                          style="padding: 1rem"
                                          :key="index"
                                          @click="openChangeSpoolDialog(spool)">
-                                        <svg viewBox="0 0 235 500" preserveAspectRatio="xMinYMin meet" width="23.5" height="50" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
-                                        <path style="stroke:#6e0b30;stroke-width:0;stroke-dasharray:none;stroke-linecap:butt;stroke-dashoffset:0;stroke-linejoin:miter;stroke-miterlimit:4;fill:#c08f4f;fill-rule:nonzero;opacity:1" vector-effect="non-scaling-stroke" transform="matrix(.58757 0 0 3.94769 197.135 250.047)" d="M0-63.27c34.925 0 63.27 28.345 63.27 63.27 0 34.925-28.345 63.27-63.27 63.27-34.925 0-63.27-28.345-63.27-63.27 0-34.925 28.345-63.27 63.27-63.27z" />
-                                        <path style="stroke:#6e0b30;stroke-width:0;stroke-dasharray:none;stroke-linecap:butt;stroke-dashoffset:0;stroke-linejoin:miter;stroke-miterlimit:4;fill:#c08f4f;fill-rule:nonzero;opacity:1" vector-effect="non-scaling-stroke" transform="matrix(.38158 0 0 3.46232 197.135 250.047)" d="M0-63.27c34.925 0 63.27 28.345 63.27 63.27 0 34.925-28.345 63.27-63.27 63.27-34.925 0-63.27-28.345-63.27-63.27 0-34.925 28.345-63.27 63.27-63.27z" />
-                                        <path v-if="spool.load" class="filament-reel"
-                                              :style="{
-                                                        fill: spool.color,
-                                                        stroke: '#000',
-                                                        strokeWidth: 0,
-                                                        strokeDasharray: 'none',
-                                                        strokeLinecap: 'butt',
-                                                        strokeDashoffset: 0,
-                                                        strokeLinejoin: 'miter',
-                                                        strokeMiterlimit: 4,
-                                                        fillRule: 'nonzero',
-                                                        opacity: 1
-                                                    }"
-                                              vector-effect="non-scaling-stroke"
-                                              transform="matrix(2.07364 0 0 3.3577 117.295 250.047)"
-                                              d="M-38.503-65.24h77.006V65.24h-77.006z" />
-                                        <g transform="matrix(.58757 0 0 3.94769 37.454 250.047)">
-                                        <filter id="a" y="-.057" height="1.114" x="-.057" width="1.272">
-                                        <feGaussianBlur in="SourceAlpha" stdDeviation="3" />
-                                        <feOffset dx="20" result="oBlur" />
-                                        <feFlood flood-color="rgb(0,0,0)" flood-opacity=".67" />
-                                        <feComposite in2="oBlur" operator="in" />
-                                        <feMerge>
-                                        <feMergeNode />
-                                        <feMergeNode in="SourceGraphic" />
-                                                        </feMerge>
-                                                    </filter>
-                                        <path style="stroke:#6e0b30;stroke-width:0;stroke-dasharray:none;stroke-linecap:butt;stroke-dashoffset:0;stroke-linejoin:miter;stroke-miterlimit:4;fill:#c08f4f;fill-rule:nonzero;opacity:1;filter:url(#a)" vector-effect="non-scaling-stroke" d="M0-63.27c34.925 0 63.27 28.345 63.27 63.27 0 34.925-28.345 63.27-63.27 63.27-34.925 0-63.27-28.345-63.27-63.27 0-34.925 28.345-63.27 63.27-63.27z" />
-                                        <path style="stroke:#6e0b30;stroke-width:0;stroke-dasharray:none;stroke-linecap:butt;stroke-dashoffset:0;stroke-linejoin:miter;stroke-miterlimit:4;fill:#c08f4f;fill-rule:nonzero;opacity:1" vector-effect="non-scaling-stroke" transform="scale(.41452)" d="M0-63.27c34.925 0 63.27 28.345 63.27 63.27 0 34.925-28.345 63.27-63.27 63.27-34.925 0-63.27-28.345-63.27-63.27 0-34.925 28.345-63.27 63.27-63.27z" />
-                                                </g>
-                                        </svg>
+                                        <FilamentReelIcon v-if="spool.load"
+                                                          :color="spool.color"
+                                                          style="width: 60%; float: left"
+                                                          class="mr-3" />
+                                        <FilamentReelIcon v-else
+                                                          style="width: 60%; float: left"
+                                                          :color='spool.empty'
+                                                          class="mr-3" />
+
                                     </div>
-                                    <div class="v-subheader _tool-slider-subheader px-1" style="height: 25px;">
+                                    <div class="spool-header">
                                         <span :class="{
                                                 'status-light': true,
                                                 'status-not-ready': determineStatus(spool) === 'Not Ready',
@@ -301,6 +277,7 @@ export default class AfcPanel extends Mixins(BaseMixin) {
                             const laneData = unit[laneKey];
                             laneData.unitName = unitName;
                             laneData.laneName = laneKey;
+                            laneData.empty = '#2e2e2e'
                             lanes.push(laneData);
                             laneList.push(laneKey);
                             mapList.push(unit[laneKey]['map']);
@@ -417,12 +394,13 @@ export default class AfcPanel extends Mixins(BaseMixin) {
 
     .spool-container {
         display: flex;
+        float: left;
         flex-wrap: wrap;
         justify-content: space-evenly;
         gap: 8px;
         padding: 8px;
         padding-top: 0px;
-        margin-top: 15px;
+        margin-top: 0px;
     }
 
     .unit-title {
@@ -438,7 +416,7 @@ export default class AfcPanel extends Mixins(BaseMixin) {
         padding-top: 0px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         flex: 1 1 calc(23% - 16px);
-        max-width: 180px;
+        max-width: 120px;
         min-width: 80px;
         min-height: 117px;
         position: relative;
@@ -460,7 +438,7 @@ export default class AfcPanel extends Mixins(BaseMixin) {
 
     .spool-header {
         display: flex;
-        align-items: center;
+        justify-content: space-evenly;
         gap: 5px;
     }
 
