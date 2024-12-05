@@ -1,4 +1,4 @@
-﻿<template>
+<template>
     <svg
         height="20px"
         width="20px"
@@ -24,7 +24,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 @Component
 export default class InfinityIcon extends Vue {
     // Optional color prop with a default value of green
-    @Prop({ required: false, default: '#08ff00' }) readonly color!: string;
+    @Prop({ required: false, default: '#000000' }) readonly color!: string;
 
     // Computed property to generate dynamic styles
     get infColorStyle() {
