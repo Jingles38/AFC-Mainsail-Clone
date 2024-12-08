@@ -98,7 +98,7 @@
                                                 class="afclist"
                                                 @change="handleMapChange($event, spool)">
                                             <template v-for="option in mapList" v-bind:value="option">
-                                                <template v-else-if="option === spool.map">
+                                                <template v-if="option === spool.map">
                                                     <option :value="option" selected>
                                                         {{ option }}
                                                     </option>
