@@ -25,17 +25,26 @@
                 </v-menu>
             </template>
             <div class="status-wrapper">
-                <div class="tool-status">
-                    <strong>Tool:</strong>
+                <div v-for="(tool, toolName) in toolData"
+                     class="tool-status">
                     <span :class="{
-                            'status-light': true,
-                            'status-green': toolStartSensorStatus,
-                            'status-red': !toolStartSensorStatus,
-                        }"></span>
-                </div>
-                <div class="buffer-status">
-                    <span v-if="systemData?.extruders?.extruder?.buffer_status">
-                        <strong>Buffer:</strong> {{ bufferStatus() }}
+                    'status-light': true,
+                    'status-green': tool.tool_start_sensor,
+                    'status-red': !tool.tool_start_sensor,
+                    }">
+                    </span>
+                    <strong>{{ toolName }}</strong>
+                    <span :class="{
+                        'status-light': true,
+                        'status-green': tool.tool_end_sensor,
+                        'status-red': !tool.tool_end_sensor,
+                    }">
+                    </span>
+                    <span class="buffer-status">
+                        <strong>{{ tool.buffer }}:</strong> {{ tool.buffer_status }}
+                    </span>
+                    <span class="buffer-status">
+                        <strong>Lane Loaded:</strong> {{ tool.lane_loaded }}
                     </span>
                 </div>
             </div>
@@ -81,18 +90,17 @@
                                                           style="width: 60%; float: left"
                                                           :color='spool.empty'
                                                           class="mr-3" />
-
                                     </div>
                                     <div class="spool-header">
-                                        <span :class="{
-                                                'status-light': true,
-                                                'status-not-ready': determineStatus(spool) === 'Not Ready',
-                                                'status-prep': determineStatus(spool) === 'Prep',
-                                                'status-ready': determineStatus(spool) === 'Ready',
-                                                'status-in-tool': determineStatus(spool) === 'In Tool',
-                                            }">
+                                        <span style="color:red" v-if="!spool.load && !spool.prep">
+                                            <h3>{{ spool.laneName }}</h3>
                                         </span>
-                                        <h3>{{ spool.laneName }}</h3>
+                                        <span style="color:yellow" v-if="!spool.load && spool.prep">
+                                            <h3>{{ spool.laneName }}</h3>
+                                        </span>
+                                        <span style="color:green" v-if="spool.load && spool.prep">
+                                            <h3>{{ spool.laneName }}</h3>
+                                        </span>
                                         <div class="spacer"></div>
                                         <select :name="'map-' +spool.laneName"
                                                 class="afclist"
@@ -224,10 +232,10 @@ export default class AfcPanel extends Mixins(BaseMixin) {
 
     fetchSpoolData() {
         const afcData = this.afc_Data ? JSON.parse(JSON.stringify(this.afc_Data)) : null;
-
         if (afcData) {
-            this.spoolData = this.extractLaneData(afcData);
             this.unitsData = this.groupByUnit(this.spoolData);
+            this.spoolData = this.extractLaneData(afcData);
+            this.toolData = afcData.system.extruders || {};
             this.systemData = afcData.system || {};
             for (const unitName in afcData) {
                 if (afcData.hasOwnProperty(unitName) && unitName !== "system") {
@@ -370,7 +378,9 @@ export default class AfcPanel extends Mixins(BaseMixin) {
         }
         return "Not Ready";
     }
-}</script>
+}
+   
+    </script>
 
 <style scoped>
     .afc-panel-wrapper {
@@ -434,9 +444,6 @@ export default class AfcPanel extends Mixins(BaseMixin) {
     }
 
     .status-wrapper {
-        display: flex;
-        float: left;
-        flex-wrap: wrap;
         justify-content: space-evenly;
         border-bottom: 1px solid #ccc;
         padding-bottom: 10px;
@@ -457,7 +464,7 @@ export default class AfcPanel extends Mixins(BaseMixin) {
     }
 
     .status-red {
-        background-color: red;
+         background-color: red;
     }
 
     .hub-status {
@@ -466,13 +473,11 @@ export default class AfcPanel extends Mixins(BaseMixin) {
     }
 
     .buffer-status {
-        display: block;
         margin-top: 5px;
     }
 
     .tool-status {
-        text-align: center;
-        margin-left: 15px;
+          margin-left: 15px;
     }
 
     .status-not-ready {
