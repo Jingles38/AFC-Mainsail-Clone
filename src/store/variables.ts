@@ -97,6 +97,7 @@ export const allDashboardPanels = [
     'afc',
     'temperature',
     'webcam',
+    'afc',
 ]
 
 export const thumbnailSmallMin = 30

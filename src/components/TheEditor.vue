@@ -398,4 +398,28 @@ export default class TheEditor extends Mixins(BaseMixin) {
     background-color: var(--color-primary);
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E %3Cpath d='M15.88 8.29L10 14.17l-1.88-1.88a.996.996 0 1 0-1.41 1.41l2.59 2.59c.39.39 1.02.39 1.41 0L17.3 9.7a.996.996 0 0 0 0-1.41c-.39-.39-1.03-.39-1.42 0z' fill='%23fffff'/%3E %3C/svg%3E");
 }
+
+@media screen and (min-width: 960px) {
+    .codemirror:not(.withSidebar) {
+        width: 100%;
+    }
+    .codemirror.withSidebar {
+        width: calc(100% - 300px);
+    }
+}
+
+.structure-sidebar {
+    width: 300px;
+    overflow-y: auto;
+    max-height: calc(100vh - 48px);
+}
+._structure-sidebar-item {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+::v-deep .v-treeview-node__level + .v-treeview-node__level {
+    width: 12px;
+}
 </style>

@@ -99,6 +99,12 @@ export default class ControlMixin extends Vue {
             })
     }
 
+    get existsClientLinearMoveMacro() {
+        const macros = this.$store.state.printer?.gcode?.commands ?? {}
+
+        return '_CLIENT_LINEAR_MOVE' in macros
+    }
+
     doHome() {
         this.$store.dispatch('server/addEvent', { message: 'G28', type: 'command' })
         this.$socket.emit('printer.gcode.script', { script: 'G28' }, { loading: 'homeAll' })
@@ -135,11 +141,27 @@ export default class ControlMixin extends Vue {
     }
 
     doSendMove(gcode: string, feedrate: number) {
-        gcode = 'G91' + '\n' + 'G1 ' + gcode + ' F' + feedrate * 60
+        let command =
+            `SAVE_GCODE_STATE NAME=_ui_movement\n` +
+            `G91\n` +
+            `G1 ${gcode} F${feedrate * 60}\n` +
+            `RESTORE_GCODE_STATE NAME=_ui_movement`
 
-        if (this.absolute_coordinates) gcode += '\nG90'
+        if (this.existsClientLinearMoveMacro) {
+            gcode = gcode
+                .split(' ')
+                .map((part) => {
+                    const axis = part.slice(0, 1)
+                    const value = parseFloat(part.slice(1))
 
-        this.doSend(gcode)
+                    return `${axis}=${value}`
+                })
+                .join(' ')
+
+            command = `_CLIENT_LINEAR_MOVE ${gcode} F=${feedrate * 60}`
+        }
+
+        this.doSend(command)
     }
 
     doSend(gcode: string) {

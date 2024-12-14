@@ -97,6 +97,7 @@ import StatusPanel from '@/components/panels/StatusPanel.vue'
 import ToolheadControlPanel from '@/components/panels/ToolheadControlPanel.vue'
 import TemperaturePanel from '@/components/panels/TemperaturePanel.vue'
 import WebcamPanel from '@/components/panels/WebcamPanel.vue'
+import AfcPanel from '@/components/panels/AfcPanel.vue'
 
 @Component({
     components: {
@@ -114,6 +115,7 @@ import WebcamPanel from '@/components/panels/WebcamPanel.vue'
         ToolheadControlPanel,
         TemperaturePanel,
         WebcamPanel,
+        AfcPanel,
     },
 })
 export default class PageDashboard extends Mixins(DashboardMixin) {

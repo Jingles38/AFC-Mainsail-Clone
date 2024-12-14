@@ -126,21 +126,63 @@ export default class WebrtcCameraStreamer extends Mixins(BaseMixin, WebcamMixin)
                 this.remote_pc_id = answer.id
                 return this.pc?.setRemoteDescription(answer)
             })
-            .then(() => this.pc?.createAnswer())
-            .then((answer) => this.pc?.setLocalDescription(answer))
-            .then(() => {
-                const offer = this.pc?.localDescription
-                return fetch(this.url, {
-                    body: JSON.stringify({
-                        type: offer?.type,
-                        id: this.remote_pc_id,
-                        sdp: offer?.sdp,
-                    }),
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    method: 'POST',
-                })
+            if (response.status !== 200) {
+                this.log(`Failed to start stream: ${response.status}`)
+                this.restartStream()
+                return
+            }
+
+            const answer = await response.json()
+            await this.onIceServers(answer)
+        } catch (e) {
+            this.log('Failed to start stream', e)
+        }
+    }
+
+    async onIceServers(iceResponse: CameraStreamerResponse) {
+        if (this.pc) this.pc.close()
+
+        // It's important to set any ICE servers returned, which could include servers we requested or servers
+        // setup by the server. But note that older versions of camera-streamer won't return this property.
+        let peerConnectionConfig: RTCConfiguration = {
+            iceServers: iceResponse.iceServers ?? [],
+            // https://webrtc.org/getting-started/unified-plan-transition-guide
+            // @ts-ignore
+            sdpSemantics: 'unified-plan',
+        }
+        this.pc = new RTCPeerConnection(peerConnectionConfig)
+
+        this.pc.addTransceiver('video', { direction: 'recvonly' })
+
+        if ('iceServers' in iceResponse) {
+            this.pc.onicecandidate = (e: RTCPeerConnectionIceEvent) => this.onIceCandidate(e, iceResponse.id)
+        } else {
+            this.log('No ICE servers returned, so the current camera-streamer version may not support them')
+        }
+
+        this.pc.onconnectionstatechange = () => this.onConnectionStateChange()
+        this.pc.ontrack = (e) => this.onTrack(e)
+
+        await this.pc?.setRemoteDescription(iceResponse)
+        const answer = await this.pc.createAnswer()
+        await this.pc.setLocalDescription(answer)
+
+        const offer = this.pc.localDescription
+        if (!offer) {
+            this.log('Failed to create offer')
+            this.restartStream()
+            return
+        }
+
+        try {
+            const response = await fetch(this.url, {
+                body: JSON.stringify({
+                    type: offer?.type,
+                    id: iceResponse.id,
+                    sdp: offer?.sdp,
+                }),
+                headers: { 'Content-Type': 'application/json' },
+                method: 'POST',
             })
             .then((response: any) => {
                 if (isFirefox) this.status = 'connected'
@@ -158,7 +200,6 @@ export default class WebrtcCameraStreamer extends Mixins(BaseMixin, WebcamMixin)
                 }, 5000)
             })
     }
-
     mounted() {
         this.startStream()
     }

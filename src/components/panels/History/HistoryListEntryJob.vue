@@ -148,7 +148,7 @@ import {
     mdiPrinter,
     mdiTextBoxSearch,
 } from '@mdi/js'
-import { formatFilesize, formatPrintTime } from '@/plugins/helpers'
+import { escapePath, formatFilesize, formatPrintTime } from '@/plugins/helpers'
 import { HistoryListPanelCol } from '@/components/panels/HistoryListPanel.vue'
 import HistoryListPanelNoteDialog from '@/components/dialogs/HistoryListPanelNoteDialog.vue'
 import AddBatchToQueueDialog from '@/components/dialogs/AddBatchToQueueDialog.vue'
@@ -330,6 +330,16 @@ export default class HistoryListPanel extends Mixins(BaseMixin) {
             default:
                 return value
         }
+    }
+    createThumbnailUrl(thumbnail: FileStateFileThumbnail) {
+        let relative_url = ''
+        if (this.item.filename.lastIndexOf('/') !== -1) {
+            relative_url = this.item.filename.substring(0, this.item.filename.lastIndexOf('/') + 1)
+        }
+
+        return `${this.apiUrl}/server/files/gcodes/${escapePath(relative_url + thumbnail.relative_path)}?timestamp=${
+            this.item.metadata.modified
+        }`
     }
 }
 </script>
