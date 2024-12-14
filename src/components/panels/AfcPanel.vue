@@ -24,29 +24,45 @@
                     </v-list>
                 </v-menu>
             </template>
-            <div class="status-wrapper">
-                <div v-for="(tool, toolName) in toolData"
-                     class="tool-status">
-                    <span :class="{
-                    'status-light': true,
-                    'status-green': tool.tool_start_sensor,
-                    'status-red': !tool.tool_start_sensor,
-                    }">
-                    </span>
-                    <strong>{{ toolName }}</strong>
-                    <span :class="{
-                        'status-light': true,
-                        'status-green': tool.tool_end_sensor,
-                        'status-red': !tool.tool_end_sensor,
-                    }">
-                    </span>
-                    <span class="buffer-status">
-                        <strong>{{ tool.buffer }}:</strong> {{ tool.buffer_status }}
-                    </span>
-                    <span class="buffer-status">
-                        <strong>Lane Loaded:</strong> {{ tool.lane_loaded }}
-                    </span>
-                </div>
+            <div>
+                <v-expansion-panels>
+                    <v-expansion-panel>
+                        <v-expansion-panel-header>
+                            <strong>Extruder Tools</strong>
+                        </v-expansion-panel-header>
+                            <v-expansion-panel-content style="padding-top: 0em;">
+                                <div v-for="(tool, toolName) in toolData" class="tool-status">
+                                    <div style="margin-right: 20px; float: left; margin-top: 0px;">
+                                        <span :class="{
+                            'status-light': true,
+                            'status-green': tool.tool_start_sensor,
+                            'status-red': !tool.tool_start_sensor,
+                            }">
+                                        </span>
+                                        {{ toolName }}
+                                        <span :class="{
+                            'status-light': true,
+                            'status-green': tool.tool_end_sensor,
+                            'status-red': !tool.tool_end_sensor,
+                            }">
+                                        </span>
+                                    </div>
+                                    <div style="margin-right: 10px; float: left; margin-top: 0px;">
+                                        {{ tool.buffer }}: {{ tool.buffer_status }}
+                                    </div>
+                                    <div v-if="tool.lane_loaded !== ''" style="margin-right: 10px; float: right; margin-top: 0px;">
+                                        Lane Loaded: {{ tool.lane_loaded }}
+                                    </div>
+                                    <div v-if="tool.lane_loaded === ''" style="margin-right: 10px; float: right; margin-top: 0px;">
+                                        Lane Loaded:
+                                        <span style="color: red">
+                                            NONE
+                                        </span>
+                                    </div>
+                                </div>
+                            </v-expansion-panel-content>
+                    </v-expansion-panel>
+                </v-expansion-panels>
             </div>
             <div v-for="(unit, unitName) in unitsData"
                  :key="unitName"
@@ -92,13 +108,16 @@
                                                           class="mr-3" />
                                     </div>
                                     <div class="spool-header">
-                                        <span style="color:red" v-if="!spool.load && !spool.prep">
+                                        <span style="color:red" v-if="!spool.load && !spool.prep && !spool.tool_loaded">
                                             <h3>{{ spool.laneName }}</h3>
                                         </span>
-                                        <span style="color:yellow" v-if="!spool.load && spool.prep">
+                                        <span style="color:yellow" v-if="!spool.load && spool.prep && !spool.tool_loaded">
                                             <h3>{{ spool.laneName }}</h3>
                                         </span>
-                                        <span style="color:green" v-if="spool.load && spool.prep">
+                                        <span style="color:green" v-if="spool.load && spool.prep && !spool.tool_loaded">
+                                            <h3>{{ spool.laneName }}</h3>
+                                        </span>
+                                        <span style="color:blue" v-if="spool.load && spool.prep && spool.tool_loaded">
                                             <h3>{{ spool.laneName }}</h3>
                                         </span>
                                         <div class="spacer"></div>
