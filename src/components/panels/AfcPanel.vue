@@ -40,11 +40,11 @@
                             }">
                                         </span>
                                         {{ toolName }}
-                                        <span :class="{
-                            'status-light': true,
-                            'status-green': tool.tool_end_sensor,
-                            'status-red': !tool.tool_end_sensor,
-                            }">
+                                        <span v-if="tool.tool_end_sensor !== null" :class="{
+                                            'status-light': true,
+                                            'status-green': tool.tool_end_sensor,
+                                            'status-red': !tool.tool_end_sensor,
+                                        }">
                                         </span>
                                     </div>
                                     <div style="margin-right: 10px; float: left; margin-top: 0px;">
@@ -139,7 +139,7 @@
                                         </select>
                                     </div>
                                     <infinity-icon v-if="spool.runout_lane === 'NONE'"
-                                                   :color="infispoolNo""
+                                                   :color="infispoolNo"
                                                    height="20px"
                                                    width="20px"
                                                    version="1.1"
