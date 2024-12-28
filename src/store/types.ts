@@ -56,4 +56,12 @@ export interface Theme {
         show: boolean
         light: boolean
     }
+    css?: boolean
+}
+
+export interface KlipperRepos {
+    [name: string]: {
+        url: string
+        docsLanguages?: string[]
+    }
 }
